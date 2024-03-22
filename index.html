@@ -7,9 +7,19 @@
     <title>Coords calculator</title>
     <script src="main.js" defer type="module"></script>
     <style>
+        body,
+        input {
+            background-color: #aaa;
+        }
+
         input {
             display: block;
+            width: 90vmin;
             margin-bottom: 2px;
+            border: solid 2px black;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            font-size: 3.7vmin;
         }
 
         input.invalid {
@@ -33,9 +43,10 @@
 <body>
     <div class="container">
         <div class="center">
-            <input type="text" id="dd" placeholder="50.0668316, 19.9133604" size="26">
-            <input type="text" id="dms" placeholder="50° 04′ 00.593″ N 19° 54′ 48.097″ E" size="26">
-            <input type="text" id="maidenhead" placeholder="JO90wb96oa" size="26">
+            <input type="text" id="dd" placeholder="50.0668316, 19.9133604" title="Decimal Degrees">
+            <input type="text" id="dms" placeholder="50° 04′ 00.593″ N 19° 54′ 48.097″ E"
+                title="Degrees Minutes Seconds">
+            <input type="text" id="maidenhead" placeholder="JO90wb96oa" title="QTH Locator">
         </div>
     </div>
 </body>

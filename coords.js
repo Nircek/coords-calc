@@ -4,7 +4,7 @@ export class DecimalDegrees {
         return str
             .replace(/,/g, ", ")
             .replace(/\s{2,}/g, " ")
-            .replace(/[^-+0-9,. ]/, "");
+            .replace(/[^-+0-9,. ]/g, "");
 
     }
     static convert(str) {
@@ -25,7 +25,7 @@ export class DegreesMinutesSeconds {
             .replace(/'/g, "′")
             .replace(/′′|"/g, "″")
             .toUpperCase()
-            .replace(/[^0-9.°′″NESW ]/, "")
+            .replace(/[^0-9.°′″NESW ]/g, "")
             .replace(/°/g, "° ")
             .replace(/′/g, "′ ")
             .replace(/″/g, "″ ")
@@ -63,7 +63,6 @@ export class Maidenhead {
     static #alphabet_lower = Maidenhead.#alphabet_upper.toLowerCase();
     static tidy(str) {
         return str.substr(0, 2).toUpperCase() + str.substr(2).toLowerCase();
-
     }
     static convert(str) {
         let long = -180, lat = -90;
