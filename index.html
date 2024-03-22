@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coords calculator</title>
+    <script src="main.js" defer type="module"></script>
+    <style>
+        input {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        input.invalid {
+            box-shadow: 0 0 5px 1px red;
+        }
+
+        html,
+        body,
+        .container {
+            height: 100%;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="center">
+            <input type="text" id="dd" placeholder="50.0668316, 19.9133604" size="26">
+            <input type="text" id="dms" placeholder="50° 04′ 00.600″ N 19° 54′ 48.100″ E" size="26">
+        </div>
+    </div>
+</body>
+
+</html>
