@@ -44,13 +44,15 @@ export class DecimalDegrees {
 }
 
 export class DegreesMinutesSeconds {
-    static regex = /^(?:[1-8]?\d°(?: ?\d\d?′(?: ?\d\d?(?:.\d\d?\d?)?″)?|90°(?: ?00?′(?: ?00?(?:.00?0?)?″)?)?)?) ?[NS] (?:180°(?: ?00?′(?: ?00?(?:.00?0?)?″)?)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))°(?: ?\d\d?′(?: ?\d\d?(?:.\d\d?\d?)?″)?)?) ?[EW]$/;
+    static regex = /^(?:[1-8]?\d°(?: ?\d\d?′(?: ?\d\d?(?:\.\d\d?\d?)?″)?|90°(?: ?00?′(?: ?00?(?:\.00?0?)?″)?)?)?) ?[NS] (?:180°(?: ?00?′(?: ?00?(?:\.00?0?)?″)?)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))°(?: ?\d\d?′(?: ?\d\d?(?:\.\d\d?\d?)?″)?)?) ?[EW]$/;
 
     static tidy(str) {
         return str
-            .replace(/d/g, "°")
-            .replace(/'/g, "′")
-            .replace(/′′|"/g, "″")
+            // src: https://typefacts.com/en/articles/degree-feet-inches-minutes-seconds
+            .replace(/[d˚º⁰]/g, "°")
+            .replace(/['`‘’´]/g, "′")
+            .replace(/′′|["“”˝]/g, "″")
+            .replace(/,/g, ".")
             .toUpperCase()
             .replace(/[^0-9.°′″NESW ]/g, "")
             .replace(/°/g, "° ")
@@ -88,9 +90,9 @@ export class DegreesMinutesSeconds {
 
 export class Maidenhead {
     static regex = /^[A-Ra-r]{2}([0-9]{2}([A-Xa-x]{2}([0-9]{2}([A-Xa-x]{2}([0-9]{2}([A-Xa-x]{2}([0-9]{2})?)?)?)?)?)?)?$/;
-    static #charCode_A = 'A'.charCodeAt(0);
-    static #charCode_a = 'a'.charCodeAt(0);
-    static #alphabet_upper = 'ABCDEFGHIJKLMNOPQRSTUVWX';
+    static #charCode_A = "A".charCodeAt(0);
+    static #charCode_a = "a".charCodeAt(0);
+    static #alphabet_upper = "ABCDEFGHIJKLMNOPQRSTUVWX";
     static #alphabet_lower = Maidenhead.#alphabet_upper.toLowerCase();
 
     static tidy(str) {
@@ -119,7 +121,7 @@ export class Maidenhead {
     static generate(lat, long) {
         if (long >= 180) long = -180;
         long += 180; lat += 90;
-        let square = [long / 20, lat / 10].map(x => Maidenhead.#alphabet_upper[x | 0]).join('');
+        let square = [long / 20, lat / 10].map(x => Maidenhead.#alphabet_upper[x | 0]).join("");
         long = long % 20 / 20; lat = lat % 10 / 10;
         for (let i = 1; i < 5; ++i) {
             if (i % 2 == 1) {
@@ -127,7 +129,7 @@ export class Maidenhead {
                 long = long * 10 % 1;
                 lat = lat * 10 % 1;
             } else {
-                square += [long * 24, lat * 24].map(x => Maidenhead.#alphabet_lower[x | 0]).join('');
+                square += [long * 24, lat * 24].map(x => Maidenhead.#alphabet_lower[x | 0]).join("");
                 long = long * 24 % 1;
                 lat = lat * 24 % 1;
             }
@@ -137,7 +139,7 @@ export class Maidenhead {
 }
 
 export class EPSG2180 {
-    static regex = /^(\d{6}(?:.\d+)), (\d{6}(?:.\d+))$/;
+    static regex = /^(\d{6}(?:\.\d+)), (\d{6}(?:\.\d+))$/;
 
     static tidy(str) {
         return str
