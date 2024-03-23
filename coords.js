@@ -1,17 +1,43 @@
-export class DecimalDegrees {
+import proj4 from "proj4";
+
+// src: https://epsg.io/2180
+proj4.defs("EPSG:2180", "+proj=tmerc +lat_0=0 +lon_0=19 +k=0.9993 +x_0=500000 +y_0=-5300000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs");
+
+export class FullDecimalDegrees {
     static regex = /^([-+]?(?:[1-8]?\d(?:\.\d+)?|90(?:\.0+)?)), ([-+]?(?:180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?))$/;
+
     static tidy(str) {
         return str
             .replace(/,/g, ", ")
             .replace(/\s{2,}/g, " ")
             .replace(/[^-+0-9,. ]/g, "");
-
     }
+
+    static convert(str) {
+        const [_, lat, long] = str.match(FullDecimalDegrees.regex);
+        return [+lat, +long];
+    }
+
+    static generate(lat, long) {
+        return `${lat}, ${long}`;
+    }
+}
+
+export class DecimalDegrees {
+    static regex = /^([-+]?(?:[1-8]?\d(?:\.\d+)?|90(?:\.0+)?)), ([-+]?(?:180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?))$/;
+
+    static tidy(str) {
+        return str
+            .replace(/,/g, ", ")
+            .replace(/\s{2,}/g, " ")
+            .replace(/[^-+0-9,. ]/g, "");
+    }
+
     static convert(str) {
         const [_, lat, long] = str.match(DecimalDegrees.regex);
         return [+lat, +long];
-
     }
+
     static generate(lat, long) {
         return `${lat.toFixed(7)}, ${long.toFixed(7)}`;
     }
@@ -19,6 +45,7 @@ export class DecimalDegrees {
 
 export class DegreesMinutesSeconds {
     static regex = /^(?:[1-8]?\d°(?: ?\d\d?′(?: ?\d\d?(?:.\d\d?\d?)?″)?|90°(?: ?00?′(?: ?00?(?:.00?0?)?″)?)?)?) ?[NS] (?:180°(?: ?00?′(?: ?00?(?:.00?0?)?″)?)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))°(?: ?\d\d?′(?: ?\d\d?(?:.\d\d?\d?)?″)?)?) ?[EW]$/;
+
     static tidy(str) {
         return str
             .replace(/d/g, "°")
@@ -31,10 +58,12 @@ export class DegreesMinutesSeconds {
             .replace(/″/g, "″ ")
             .replace(/\s{2,}/g, " ");
     }
+
     static #convert_dms_str(str) {
         const [deg, min, sec] = [...str.split(/[°′″]/g), 0, 0];
         return + deg + min / 60 + sec / 3600;
     }
+
     static convert(str) {
         const [str_lat, str_long] = str.replace(" ", "").split(/[NESW]/g);
         const [sign_lat, sign_long] = [...str.replace(/[^NESW]/g, "")]
@@ -43,6 +72,7 @@ export class DegreesMinutesSeconds {
         const [lat, long] = [str_lat, str_long].map(DegreesMinutesSeconds.#convert_dms_str);
         return [(sign_lat ? -1 : 1) * lat, (sign_long ? -1 : 1) * long];
     }
+
     static #generate_dms_str(dd, long) {
         const sign = dd < 0;
         if (sign) dd = -dd;
@@ -50,6 +80,7 @@ export class DegreesMinutesSeconds {
         const dir = "NESW"[sign * 2 + long];
         return `${dd / 3600 | 0}° ${dd % 3600 / 60 | 0}′ ${(dd % 60).toFixed(3)}″ ${dir}`;
     }
+
     static generate(lat, long) {
         return `${DegreesMinutesSeconds.#generate_dms_str(lat, false)} ${DegreesMinutesSeconds.#generate_dms_str(long, true)}`;
     }
@@ -61,9 +92,11 @@ export class Maidenhead {
     static #charCode_a = 'a'.charCodeAt(0);
     static #alphabet_upper = 'ABCDEFGHIJKLMNOPQRSTUVWX';
     static #alphabet_lower = Maidenhead.#alphabet_upper.toLowerCase();
+
     static tidy(str) {
         return str.substr(0, 2).toUpperCase() + str.substr(2).toLowerCase();
     }
+
     static convert(str) {
         let long = -180, lat = -90;
         long += 20 * (str.charCodeAt(0) - Maidenhead.#charCode_A);
@@ -82,6 +115,7 @@ export class Maidenhead {
         }
         return [lat + dlat / 2, long + dlong / 2];
     }
+
     static generate(lat, long) {
         if (long >= 180) long = -180;
         long += 180; lat += 90;
@@ -102,9 +136,34 @@ export class Maidenhead {
     }
 }
 
+export class EPSG2180 {
+    static regex = /^(\d{6}(?:.\d+)), (\d{6}(?:.\d+))$/;
+
+    static tidy(str) {
+        return str
+            .replace(/,/g, ", ")
+            .replace(/\s{2,}/g, " ")
+            .replace(/[^-+0-9,. ]/g, "");
+    }
+
+    static convert(str) {
+        const [_, x, y] = str.match(EPSG2180.regex);
+        const [long, lat] = proj4("EPSG:2180").inverse([+y, +x]);
+        return [lat, long];
+    }
+
+    static generate(lat, long) {
+        const [y, x] = proj4("EPSG:2180").forward([long, lat]);
+        return `${x.toFixed(2)}, ${y.toFixed(2)}`;
+    }
+}
+
 export class New {
     static regex = null;
+
     static tidy(str) { }
+
     static convert(str) { }
+
     static generate(lat, long) { }
 }

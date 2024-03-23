@@ -5,6 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coords calculator</title>
+    <script type="importmap">
+        {
+            "imports": {
+                "proj4": "https://cdn.jsdelivr.net/npm/proj4@v2.11.0/+esm"
+            }
+        }
+    </script>
     <script src="main.js" defer type="module"></script>
     <style>
         body,
@@ -22,8 +29,20 @@
             font-size: 3.7vmin;
         }
 
+        #ddf {
+            color: #555;
+            font-size: 2vmin;
+        }
+
+        #ddf::placeholder {
+            color: #777;
+            opacity: 1;
+            /* Firefox */
+        }
+
         input.invalid {
             box-shadow: 0 0 5px 1px red;
+            color: #500;
         }
 
         html,
@@ -38,15 +57,23 @@
             justify-content: center;
         }
     </style>
+
+    <script type="module" defer>
+        import proj4 from "proj4";
+        window.proj4 = proj4;
+    </script>
 </head>
 
 <body>
     <div class="container">
         <div class="center">
-            <input type="text" id="dd" placeholder="50.0668316, 19.9133604" title="Decimal Degrees">
+            <input type="text" id="ddf" placeholder="0.00000000000000000, 0.00000000000000000"
+                title="Decimal Degrees Useless Precision (see xkcd2170)">
+            <input type="text" id="dd" placeholder="50.0668316, 19.9133604" title="Decimal Degrees WGS84 (EPSG:4326)">
             <input type="text" id="dms" placeholder="50° 04′ 00.593″ N 19° 54′ 48.097″ E"
-                title="Degrees Minutes Seconds">
+                title="Degrees Minutes Seconds (use `d` for °)">
             <input type="text" id="maidenhead" placeholder="JO90wb96oa" title="QTH Locator">
+            <input type="text" id="EPSG2180" placeholder="565074.36, 245005.93" title="PL-1992 (EPSG:2180)">
         </div>
     </div>
 </body>

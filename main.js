@@ -1,7 +1,9 @@
 import {
+    FullDecimalDegrees,
     DecimalDegrees,
     DegreesMinutesSeconds,
-    Maidenhead
+    Maidenhead,
+    EPSG2180
 } from "./coords.js";
 
 var lat, long, last;
@@ -26,10 +28,12 @@ function addInput(id, obj) {
     document.addEventListener("coordsupdate", () => {
         if (element == last) return;
         element.value = obj.generate(lat, long);
-
+        element.classList.remove("invalid");
     })
 }
 
+addInput('#ddf', FullDecimalDegrees);
 addInput('#dd', DecimalDegrees);
 addInput('#dms', DegreesMinutesSeconds);
 addInput('#maidenhead', Maidenhead);
+addInput('#EPSG2180', EPSG2180);
